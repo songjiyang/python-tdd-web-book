@@ -16,7 +16,7 @@ class NewVistorTest(unittest.TestCase):
 		#头部和标题都包含"To-Do"这个词
 		self.assertIn('To-Do',self.brower.title)
 		header_test = self.brower.find_element_by_tag_name('h1').text
-		self.assertEqual('To-Do',header_test)
+		self.assertIn('To-Do',header_test)
 
 		#应用邀请她输入一个代办事项
 		inputbox = self.brower.find_element_by_id('id_new_item')
@@ -33,9 +33,10 @@ class NewVistorTest(unittest.TestCase):
 		#代办事项表格中显示了"1: Buy peacock feathers"
 		inputbox.send_keys(Keys.ENTER)
 		table = self.brower.find_element_by_id('id_list_table')
-		rows = table.find_element_by_tag_name('tr')
+		rows = table.find_elements_by_tag_name('tr')
 		self.assertTrue(
-				any(row.text == '1: Buy peacock fethers' for row in rows)
+				any(row.text == '1: Buy peacock fethers' for row in rows),
+				"New to-do item dit not appear in table"
 			)
 
 		#页面中又显示了一个文本框，可以输入其他的代办事项
