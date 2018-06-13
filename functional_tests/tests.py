@@ -40,7 +40,7 @@ class NewVistorTest(LiveServerTestCase):
 		#代办事项表格中显示了"1: Buy peacock feathers" 
 		inputbox.send_keys(Keys.ENTER)
 		edith_list_url = self.brower.current_url
-		self.assertRegex(edith_list_url,'/list/.+')
+		self.assertRegex(edith_list_url,'/lists/.+')
 		self.check_for_row_in_list_table('1: Buy peacock feathers')
 
 		#页面中又显示了一个文本框，可以输入其他的代办事项
@@ -58,7 +58,7 @@ class NewVistorTest(LiveServerTestCase):
 		##我们使用了一个新的浏览器会话
 		##确保伊迪斯的信息不会从cookie中泄露出来
 		self.brower.quit()
-		self.brower = webdriver.Firefox()
+		self.brower = webdriver.Chrome()
 
 		#弗朗西斯访问首页
 		#页面看不到伊迪斯的清单
@@ -75,7 +75,7 @@ class NewVistorTest(LiveServerTestCase):
 
 		#弗朗西斯获得了他的唯一URL
 		francis_list_url = self.brower.current_url
-		self.assertRegex(francis_list_url,'/list/.+')
+		self.assertRegex(francis_list_url,'/lists/.+')
 		self.assertNotEqual(francis_list_url,edith_list_url)
 
 		#这个页面还是没有伊迪斯的清单
