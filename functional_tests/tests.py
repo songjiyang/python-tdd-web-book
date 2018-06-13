@@ -2,8 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
+from django.test import LiveServerTestCase
 
-class NewVistorTest(unittest.TestCase):
+class NewVistorTest(LiveServerTestCase):
 	"""docstring for NewVistorTest"""
 	def setUp(self):
 		self.brower = webdriver.Chrome()	
@@ -18,7 +19,7 @@ class NewVistorTest(unittest.TestCase):
 		self.assertIn(row_text,[row.text for row in rows])
 
 	def test_can_start_a_list_and_retrive_it_later(self):
-		self.brower.get('http://localhost:8000')
+		self.brower.get(self.live_server_url)
 		#头部和标题都包含"To-Do"这个词
 		self.assertIn('To-Do',self.brower.title)
 		header_test = self.brower.find_element_by_tag_name('h1').text
@@ -36,7 +37,7 @@ class NewVistorTest(unittest.TestCase):
 		inputbox.send_keys('Buy peacock feathers')
 
 		#他按回车键之后，页面更新了
-		#代办事项表格中显示了"1: Buy peacock feathers"
+		#代办事项表格中显示了"1: Buy peacock feathers" 
 		inputbox.send_keys(Keys.ENTER)
 		self.check_for_row_in_list_table('1: Buy peacock feathers')
 
@@ -57,5 +58,3 @@ class NewVistorTest(unittest.TestCase):
 
 		#她很满意，去睡觉了
 		self.fail('Finish the test!')
-if __name__ == '__main__':
-	unittest.main()
