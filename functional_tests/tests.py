@@ -39,6 +39,8 @@ class NewVistorTest(LiveServerTestCase):
 		#他按回车键之后，页面更新了
 		#代办事项表格中显示了"1: Buy peacock feathers" 
 		inputbox.send_keys(Keys.ENTER)
+		edith_list_url = self.brower.current_url
+		self.assertRegex(edith_list_url,'/list/.+')
 		self.check_for_row_in_list_table('1: Buy peacock feathers')
 
 		#页面中又显示了一个文本框，可以输入其他的代办事项
@@ -47,14 +49,39 @@ class NewVistorTest(LiveServerTestCase):
 		inputbox.send_keys('Use peacock feathers to make a fly')
 		inputbox.send_keys(Keys.ENTER)
 
-		#页面再次更新，她的清单中显示了这两个代办事项
+		#页面再次更新，她的清单中显示了这两个代办事项                                               
 		self.check_for_row_in_list_table('1: Buy peacock feathers')
 		self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
-		#伊迪斯想知道这个网站是否会记住她的清单
-		#她看到网站为她生成了一个唯一的URL
-		#而且页面中有一些文字解说这个功能
+		
+		#现在一个叫弗朗西斯的新用户访问了网站
 
-		#她访问那个URL,发现她的代办事项还在
+		##我们使用了一个新的浏览器会话
+		##确保伊迪斯的信息不会从cookie中泄露出来
+		self.brower.quit()
+		self.brower = webdriver.Firefox()
 
-		#她很满意，去睡觉了
-		self.fail('Finish the test!')
+		#弗朗西斯访问首页
+		#页面看不到伊迪斯的清单
+		self.brower.get(self.live_server_url)
+		page_text = self.brower.find_element_by_tag_name('body').text
+		self.assertNotIn('Buy peacock feathers',page_text)
+		self.assertNotIn('make a fly',page_text)
+
+		#弗朗西斯输入一个新代办事项
+		#他不像伊迪斯那样兴趣盎然
+		inputbox = self.brower.find_element_by_id('id_new_item')
+		inputbox.send_keys('Buy milk')
+		inputbox.send_keys(Keys.ENTER)
+
+		#弗朗西斯获得了他的唯一URL
+		francis_list_url = self.brower.current_url
+		self.assertRegex(francis_list_url,'/list/.+')
+		self.assertNotEqual(francis_list_url,edith_list_url)
+
+		#这个页面还是没有伊迪斯的清单
+		page_text = self.brower.find_element_by_tag_name('body').text
+		self.assertNotIn('Buy peacock feathers',page_text)
+		self.assertIn('Buy milk',page_text)
+
+		#两个人都很满意，去睡觉了
+
